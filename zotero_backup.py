@@ -4,38 +4,41 @@ from pathlib import Path
 import platform
 import os
 
-import PySimpleGUI as sg
-sg.theme('DarkRed1')
 
+# Win10 DPI something
 import ctypes
-
 def make_dpi_aware() -> None:
     if int(platform.release()) >= 8:
         ctypes.windll.shcore.SetProcessDpiAwareness(True)
 make_dpi_aware()
 
 
+# SETTING. ONE AND ONLY
+backup_dir = Path('G:\\Мой диск\\Zotero_backups')
 
-now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
-uname = platform.uname()
-machine = f"{uname.system}_{uname.release}_{uname.node}"
-
+# Zotero defaults
 storage_dir = Path.home() / 'Zotero'
-
 roaming = os.getenv('APPDATA')
 profile_dir = Path(roaming) / 'Zotero'
 
-backup_dir = Path('G:\\Мой диск\\Zotero_backups')
-backup_dir.mkdir(exist_ok=True)
+
+# other things
+now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+uname = platform.uname()
+machine = f"{uname.system}_{uname.release}_{uname.node}"
 
 storage_archive_name = f'{now}_storage_{machine}'
 profile_archive_name = f'{now}_profile_{machine}'
 
+backup_dir.mkdir(exist_ok=True)
 storage_archive = backup_dir / storage_archive_name
 profile_archive = backup_dir / profile_archive_name
 
 
+# GUI
+import PySimpleGUI as sg
+sg.theme('DarkRed1')
 
 layout = [
     [
@@ -67,7 +70,7 @@ while True:
         break
 
     if event == 'backup':
-        pass
+        # actual script - those 2 lines
         shutil.make_archive(storage_archive, format='zip', root_dir=storage_dir)
         shutil.make_archive(profile_archive, format='zip', root_dir=profile_dir)
         sg.Popup('Success', keep_on_top=True, auto_close = True, auto_close_duration = 1)
